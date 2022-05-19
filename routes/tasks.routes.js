@@ -1,56 +1,59 @@
 const {Router}=require('express');
 const { check } = require('express-validator');
-const { createProject, getProjectById, updateProject, deleteProject, getProjects, getTasks, addCollaborators, deleteCollaborator, } = require('../controllers/projects.controller');
-const { existeProductoById } = require('../helpers/db-validators');
+
+const { getTask, createTask, updateTask, deleteTask, changeStatus } = require('../controllers/tasks.controller');
+const { existeTareaById, existeProductoById } = require('../helpers/db-validators');
 const { checkAuth } = require('../middlewares/check-auth');
 const { validarCampos } = require('../middlewares/validar-campos');
 
 const router=Router();
 
-// obtener todas los projectos
-router.get('/',[checkAuth,validarCampos],getProjects);
 
-// categoria por id
+// tarea por id
 router.get('/:id',
   [
     checkAuth,
     check('id','No es un id de mongo valido').isMongoId(),
-    check('id').custom(existeProductoById),
+    check('id').custom(existeTareaById),
     validarCampos
   ]
-,getProjectById);
+,getTask);
 
-router.get('/tareas/:id/:project',[checkAuth,validarCampos],getTasks)
-
-router.post('/addCollaborators/:project',[checkAuth,validarCampos],addCollaborators);
-
-router.post('/delete-collaborator/:project',[checkAuth,validarCampos],deleteCollaborator);
-// crear categoria
+// crear tarea
 router.post('/',[
   checkAuth,
+  check('project','No es un id de mongo valido').isMongoId(),
+  check('project').custom(existeProductoById),
   check('name',"el nombre es obligatorio").not().isEmpty(),
   check('description',"La descripcion es obligatoria").not().isEmpty(),
   validarCampos
-],createProject);
+],createTask);
 
 // categoria actualizar
 router.put('/:id',
   [
     checkAuth,
     check('id','No es un id de mongo valido').isMongoId(),
-    check('id').custom(existeProductoById),
+    check('id').custom(existeTareaById),
     check('name',"el nombre es obligatorio").not().isEmpty(),
     validarCampos,
   ]
-  ,updateProject);
+  ,updateTask);
 
 // borrar categoria solo si es admin borrar logico
 router.delete('/:id',
   [
     checkAuth,
     check('id','No es un id de mongo valido').isMongoId(),
-    check('id').custom(existeProductoById),
+    check('id').custom(existeTareaById),
     validarCampos,
   ]
-,deleteProject);
+,deleteTask);
+
+router.post('/status/:id',
+[checkAuth,
+check('id','No es un id de mongo valido').isMongoId(),
+check('id').custom(existeTareaById),
+validarCampos],
+changeStatus)
 module.exports =router;

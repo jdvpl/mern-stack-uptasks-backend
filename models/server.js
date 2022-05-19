@@ -11,6 +11,7 @@ class Server{
       users:'/api/users',
       auth:'/api/auth',
       projects:'/api/projects',
+      tasks:'/api/tasks',
     }
 
     // conectar a la base de datos
@@ -27,6 +28,7 @@ class Server{
     this.app.use(this.paths.users, require('../routes/users.routes'))
     this.app.use(this.paths.auth, require('../routes/auth.routes'))
     this.app.use(this.paths.projects, require('../routes/project.routes'))
+    this.app.use(this.paths.tasks, require('../routes/tasks.routes'))
 
   }
   listen() {

@@ -1,5 +1,7 @@
+const { request, response } = require('express');
 const Project = require('../models/projects');
 const Role=require('../models/rol');
+const Task = require('../models/tasks');
 const Usuario= require('../models/user');
 
 
@@ -51,7 +53,16 @@ const existeProductoById=async(id='')=>{
   // verificar si el produto existe
   const existsID=await Project.findById(id);
   if (!existsID){
-    throw new Error(`El producto con el id: ${id} no existe`);
+    throw new Error(`El proyecto con el id: ${id} no existe`);
+  }
+  return true;
+}
+
+const existeTareaById=async(id='')=>{
+  // verificar si el produto existe
+  const existsID=await Task.findById(id);
+  if (!existsID){
+    throw new Error(`La tarea con el id: ${id} no existe`);
   }
   return true;
 }
@@ -61,5 +72,6 @@ module.exports ={
   existeID,
   coleecionesPermitidas,
   noExisteCorreo,
-  existeProductoById
+  existeProductoById,
+  existeTareaById
 }
