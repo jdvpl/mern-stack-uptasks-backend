@@ -52,7 +52,7 @@ const createProject = async(req,res=response)=>{
     await project.save();
     return  res.status(200).json(project);
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg: error.message});
   }
 }
 // actualizar categoria
@@ -77,7 +77,7 @@ const updateProject=async(req, res=response) => {
     const producto=await Project.findByIdAndUpdate(id,data, {new: true}).populate('creator',['name']);
     return res.status(200).json(producto);
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg: error.message});
   }
 }
 
@@ -96,7 +96,7 @@ const deleteProject = async(req, res=response) => {
     const productoborrado=await Project.findByIdAndUpdate(id, {status: false}, {new:true}).populate('creator',['name']);
     return res.status(200).json({msg: `Proyecto eliminado.`,productoborrado});
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg: error.message});
   }
 }
 

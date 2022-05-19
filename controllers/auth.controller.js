@@ -27,10 +27,9 @@ const login=async(req,res=response)=>{
     }
     // generar el JWT
     const token=await generarJWT(user.id);
-    res.json({user,token})
+    return res.json({user,token})
   } catch (error) {
-    console.log(error)
-    res.status(500).json({msg: 'Hubo un error al loguearse'})
+    return res.status(500).json({msg: `Hubo un error al loguearse ${error.message}`})
   }
   
 }

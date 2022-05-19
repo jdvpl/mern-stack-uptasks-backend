@@ -14,7 +14,7 @@ const getUsersConfirmed=async(req, res=response) => {
       .skip(Number(desde))
       .limit(Number(limite))
   ])
-  res.json({total,limite,desde,usuarios});
+  return res.json({total,limite,desde,usuarios});
 }
 const usersNoConfirmed=async(req, res=response) => {
 
@@ -28,7 +28,7 @@ const usersNoConfirmed=async(req, res=response) => {
       .skip(Number(desde))
       .limit(Number(limite))
   ])
-  res.json({total,limite,desde,usuarios});
+  return res.json({total,limite,desde,usuarios});
 }
 
 const userPut=async(req, res=response) => {
@@ -81,7 +81,7 @@ const confirmAccount=async(req,res) => {
     await usuarioConfirmado.save();
     return res.status(200).json({msg: `El usuario se ha confirmado correctamente.`});
   } catch (error) {
-    return res.status(403).json({msg: error})
+    return res.status(500).json({msg: error.message});
   }
 }
 
@@ -93,7 +93,7 @@ const forgotPassword=async(req,res)=>{
     await user.save();
     return res.status(200).json({msg: `Hemos enviado un correo con las instrucciones para la actualizacion`})
   } catch (error) {
-    console.log(error)
+    return res.status(500).json({msg: error.message});
   }
 }
 
@@ -123,7 +123,7 @@ const updatePassword=async(req,res)=>{
     await usuario.save()
     return res.status(200).json({msg:`Haz actualizado el password correctamente`})
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg: error.message});
   }
 
 

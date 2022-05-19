@@ -7,14 +7,15 @@ const Task=require("../models/tasks")
 const getTask=async(req, res=response) => {
   const {id}=req.params;
   try {
-    const project=await Task.findById(id).populate('project',["name"]).populate('collaborators',['name']).where('creator').equals(req.user);
+    const project=await Task.findById(id).populate('project',["name"]).where('creator').equals(req.user);
 
     if(!project) {
       return res.status(403).json({msg: `Este usuario no tiene permiso para ver este proyecto.`});
     }
+
     return res.status(200).json(project);
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg:error.message});
   }
 }
 
@@ -45,7 +46,7 @@ const createTask = async(req,res=response)=>{
     await project.save();
     return  res.status(200).json(project);
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg:error.message});
   }
 }
 // actualizar categoria
@@ -70,7 +71,7 @@ const updateTask=async(req, res=response) => {
     const producto=await Task.findByIdAndUpdate(id,data, {new: true}).populate('creator',['name']);
     return res.status(200).json(producto);
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg:error.message})
   }
 }
 
@@ -89,7 +90,7 @@ const deleteTask = async(req, res=response) => {
     const tareaBorrada=await Task.findByIdAndUpdate(id, {status: false}, {new:true}).populate('creator',['name']);
     return res.status(200).json({msg: `Tarea eliminada.`, tareaBorrada});
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg:error.message});
   }
 }
 
