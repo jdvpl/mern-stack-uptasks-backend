@@ -1,6 +1,7 @@
 const {Router}=require('express');
 const { check } = require('express-validator');
-const { login } = require('../controllers/auth.controller');
+const { login, profile } = require('../controllers/auth.controller');
+const { checkAuth } = require('../middlewares/check-auth');
 const { validarCampos } = require('../middlewares/validar-campos');
 
 const router=Router();
@@ -12,7 +13,7 @@ router.post('/login',[
   validarCampos
 ],login);
 
-
+router.get('/profile',checkAuth,profile)
 
 
 module.exports =router;

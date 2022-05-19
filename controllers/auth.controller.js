@@ -36,5 +36,10 @@ const login=async(req,res=response)=>{
 }
 
 
+const profile=async(req, res)=>{
+  const {user}=req;
+  res.json(user)
+}
 
-module.exports = {login};
+
+module.exports = {login,profile};
