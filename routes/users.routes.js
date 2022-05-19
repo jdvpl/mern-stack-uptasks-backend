@@ -1,6 +1,6 @@
 const {Router}=require('express');
 const { check } = require('express-validator');
-const {  userPut, registerUser, userDelete, getUsersConfirmed, usersNoConfirmed } = require('../controllers/user.controller');
+const {  userPut, registerUser, userDelete, getUsersConfirmed, usersNoConfirmed, confirmAccount } = require('../controllers/user.controller');
 const { esRoleValido,existeCorreo,existeID } = require('../helpers/db-validators');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
@@ -11,6 +11,7 @@ const router=Router();
 
 router.get('/auth',getUsersConfirmed);
 router.get('/noauth',usersNoConfirmed);
+router.get('/confirm/:token',confirmAccount);
 
 router.put('/:id',
   [

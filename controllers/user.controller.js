@@ -1,4 +1,5 @@
-const {response}=require('express')
+const {response}=require('express');
+const { generateToken } = require('../helpers/generateToken');
 const User= require('../models/user');
 
 const getUsersConfirmed=async(req, res=response) => {
@@ -47,9 +48,9 @@ const userPut=async(req, res=response) => {
 }
 const registerUser=async(req, res) => {
 
-  
   const {name,email,password}=req.body;
   const user=new User({name,email,password})
+  user.token=generateToken();
 
   // guardar en la base de datos
   await user.save()
@@ -68,10 +69,28 @@ const userDelete=async(req, res) => {
 }
 
 
+const confirmAccount=async(req,res) => {
+  const {token} = req.params;
+  const usuarioConfirmado=await User.findOne({token});
+
+  if(!usuarioConfirmado){
+    return res.status(403).json({msg: `El token ${token} es invalido.`})
+  }
+  try {
+    usuarioConfirmado.status = true;
+    usuarioConfirmado.token = '';
+    await usuarioConfirmado.save();
+    return res.status(200).json({msg: `El usuario se ha confirmado correctamente.`});
+  } catch (error) {
+    return res.status(403).json({msg: error})
+  }
+}
+
 module.exports ={
-   getUsersConfirmed,
-   usersNoConfirmed,
+  getUsersConfirmed,
+  usersNoConfirmed,
   userPut,
   registerUser,
-  userDelete
+  userDelete,
+  confirmAccount
 }
