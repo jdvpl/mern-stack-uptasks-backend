@@ -78,16 +78,16 @@ const updateTask=async(req, res=response) => {
 const deleteTask = async(req, res=response) => {
   const {id}=req.params;
 
-  const tarea=await Task.findById(id);
+  const tarea=await Task.findById(id).populate('project',['creator']);
 
-  const idProyectoCreator=tarea.creator.toString();
+  const idProyectoCreator=tarea.project.creator.toString();
   const idUsuario=req.user._id.toString();
 
   if(idProyectoCreator !== idUsuario){
     return res.status(403).json({msg: `No eres el creador de este proyecto.`})
   }
   try {
-    const tareaBorrada=await Task.findByIdAndUpdate(id, {status: false}, {new:true}).populate('creator',['name']);
+    const tareaBorrada=await Task.findByIdAndUpdate(id, {status: false}, {new:true}).populate('project',['name']);
     return res.status(200).json({msg: `Tarea eliminada.`, tareaBorrada});
   } catch (error) {
     return res.status(500).json({msg:error.message});

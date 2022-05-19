@@ -1,6 +1,6 @@
 const {Router}=require('express');
 const { check } = require('express-validator');
-const { createProject, getProjectById, updateProject, deleteProject, getProjects, getTasks, addCollaborators, deleteCollaborator, } = require('../controllers/projects.controller');
+const { createProject, getProjectById, updateProject, deleteProject, getProjects, addCollaborators, deleteCollaborator, } = require('../controllers/projects.controller');
 const { existeProductoById } = require('../helpers/db-validators');
 const { checkAuth } = require('../middlewares/check-auth');
 const { validarCampos } = require('../middlewares/validar-campos');
@@ -20,7 +20,6 @@ router.get('/:id',
   ]
 ,getProjectById);
 
-router.get('/tareas/:id/:project',[checkAuth,validarCampos],getTasks)
 
 router.post('/addCollaborators/:project',[checkAuth,validarCampos],addCollaborators);
 

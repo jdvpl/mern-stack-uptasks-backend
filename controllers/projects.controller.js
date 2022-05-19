@@ -1,5 +1,6 @@
 const { response } = require("express")
-const Project=require("../models/projects")
+const Project=require("../models/projects");
+const Task = require("../models/tasks");
 
 
 
@@ -27,7 +28,11 @@ const getProjectById=async(req, res=response) => {
     if(!project) {
       return res.status(403).json({msg: `Este usuario no tiene permiso para ver este proyecto.`});
     }
-    return res.status(200).json(project);
+
+    const estado={status:true}
+    const tareas=await Task.find(estado).where('project').equals(project._id);
+
+    return res.status(200).json({project,tareas});
   } catch (error) {
     return res.status(500).json(error)
   }
@@ -108,9 +113,6 @@ const deleteCollaborator=(req, res) => {
 
 }
 
-const getTasks=(req, res) => {
-
-}
 
 module.exports = {
   createProject,
