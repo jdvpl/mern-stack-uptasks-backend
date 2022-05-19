@@ -35,7 +35,6 @@ router.put('/:id',
     checkAuth,
     check('id','No es un id de mongo valido').isMongoId(),
     check('id').custom(existeTareaById),
-    check('name',"el nombre es obligatorio").not().isEmpty(),
     validarCampos,
   ]
   ,updateTask);

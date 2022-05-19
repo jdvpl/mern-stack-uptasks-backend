@@ -7,7 +7,7 @@ const Task=require("../models/tasks")
 const getTask=async(req, res=response) => {
   const {id}=req.params;
   try {
-    const project=await Task.findById(id).populate('project',["name"]).where('creator').equals(req.user);
+    const project=await Task.findById(id).populate('project',["name","creator"]).where('creator').equals(req.user);
 
     if(!project) {
       return res.status(403).json({msg: `Este usuario no tiene permiso para ver este proyecto.`});
@@ -58,18 +58,18 @@ const updateTask=async(req, res=response) => {
     data.name=data.name.toUpperCase();
   }
   data.user=req.user._id;
-  const proyecto=await Task.findById(id);
-
-  const idProyectoCreator=proyecto.creator.toString();
+  const tarea=await Task.findById(id).populate('project',['creator']);
+  console.log(tarea)
+  const idProyectoCreator=tarea.project.creator.toString();
   const idUsuario=req.user._id.toString();
-
+  console.log(idUsuario)
   if(idProyectoCreator !== idUsuario){
     return res.status(403).json({msg: `No eres el creador de este proyecto.`})
   } 
 
   try {
-    const producto=await Task.findByIdAndUpdate(id,data, {new: true}).populate('creator',['name']);
-    return res.status(200).json(producto);
+    const task=await Task.findByIdAndUpdate(id,data, {new: true}).populate('project',['name']);
+    return res.status(200).json(task);
   } catch (error) {
     return res.status(500).json({msg:error.message})
   }
