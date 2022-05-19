@@ -121,6 +121,5 @@ module.exports = {
   updateProject,
   deleteProject,
   addCollaborators,
-  deleteCollaborator,
-  getTasks
+  deleteCollaborator
 }
