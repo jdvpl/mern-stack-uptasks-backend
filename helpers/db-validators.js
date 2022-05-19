@@ -1,3 +1,4 @@
+const Project = require('../models/projects');
 const Role=require('../models/rol');
 const Usuario= require('../models/user');
 
@@ -44,10 +45,21 @@ const coleecionesPermitidas =(coleccion='',colecciones=[])=>{
 
   return true;
 }
+
+
+const existeProductoById=async(id='')=>{
+  // verificar si el produto existe
+  const existsID=await Project.findById(id);
+  if (!existsID){
+    throw new Error(`El producto con el id: ${id} no existe`);
+  }
+  return true;
+}
 module.exports ={
   esRoleValido,
   existeCorreo,
   existeID,
   coleecionesPermitidas,
-  noExisteCorreo
+  noExisteCorreo,
+  existeProductoById
 }
