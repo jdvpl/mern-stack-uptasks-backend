@@ -1,7 +1,7 @@
 const {Router}=require('express');
 const { check } = require('express-validator');
-const {  userPut, registerUser, userDelete, getUsersConfirmed, usersNoConfirmed, confirmAccount } = require('../controllers/user.controller');
-const { esRoleValido,existeCorreo,existeID } = require('../helpers/db-validators');
+const {  userPut, registerUser, userDelete, getUsersConfirmed, usersNoConfirmed, confirmAccount, forgotPassword, updatePasswordToken, updatePassword } = require('../controllers/user.controller');
+const { esRoleValido,existeCorreo,existeID, noExisteCorreo } = require('../helpers/db-validators');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
@@ -12,6 +12,25 @@ const router=Router();
 router.get('/auth',getUsersConfirmed);
 router.get('/noauth',usersNoConfirmed);
 router.get('/confirm/:token',confirmAccount);
+router.get('/forget-password/:token',updatePasswordToken);
+
+router.post('/forget-password/:token',
+
+[
+  check('password','La contraseña debe tener minimo 6 caracteres').isLength({ min: 6}),
+  validarCampos
+]
+
+,updatePassword);
+
+
+router.post('/forgotpassword',
+[
+  check('email','Correo no valido').isEmail(),
+  check('email').custom(noExisteCorreo),
+  validarCampos
+]
+  ,forgotPassword);
 
 router.put('/:id',
   [

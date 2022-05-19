@@ -68,7 +68,6 @@ const userDelete=async(req, res) => {
     );
 }
 
-
 const confirmAccount=async(req,res) => {
   const {token} = req.params;
   const usuarioConfirmado=await User.findOne({token});
@@ -86,11 +85,59 @@ const confirmAccount=async(req,res) => {
   }
 }
 
+const forgotPassword=async(req,res)=>{
+  const {email}=req.body;
+  const user=await User.findOne({email});
+  try {
+    user.token=generateToken();
+    await user.save();
+    return res.status(200).json({msg: `Hemos enviado un correo con las instrucciones para la actualizacion`})
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+const updatePasswordToken=async(req,res)=>{
+  const {token}=req.params;
+  const tokenvalido=await User.findOne({token});
+  if(!tokenvalido){
+    return res.status(403).json({msg: `El token ${token} no es valido.`})
+  }
+  return res.status(202).json({msg: `Usuario valido`})
+}
+
+
+const updatePassword=async(req,res)=>{
+  const {token}=req.params;
+  const {password} =req.body;
+
+  const usuario=await User.findOne({token});
+  if(!usuario){
+    return res.status(403).json({msg: `El token ${token} no es valido.`})
+  }
+
+  try {
+    usuario.password=password;
+    usuario.token='';
+    await usuario.save()
+    return res.status(200).json({msg:`Haz actualizado el password correctamente`})
+  } catch (error) {
+    return res.status(500).json(error)
+  }
+
+
+}
+
+
 module.exports ={
   getUsersConfirmed,
   usersNoConfirmed,
   userPut,
   registerUser,
   userDelete,
-  confirmAccount
+  confirmAccount,
+  forgotPassword,
+  updatePasswordToken,
+  updatePassword
 }
