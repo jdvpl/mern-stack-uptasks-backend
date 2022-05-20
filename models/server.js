@@ -41,7 +41,7 @@ class Server{
   }
 
   middlewares() {
-    const whiteList=['http://localhost:3000']
+    const whiteList=['http://localhost:3000','http://192.168.20.24:3000']
 
     const corsOptions = {
       origin:function(origin,callback){
