@@ -52,9 +52,13 @@ const registerUser=async(req, res) => {
   const user=new User({name,email,password})
   user.token=generateToken();
 
-  // guardar en la base de datos
-  await user.save()
-  res.json(user);
+  try {
+    // guardar en la base de datos
+    await user.save()
+    return res.status(202).json({msg: 'Usuario creado correctamente, revisa tu correo para confirmar tu cuenta.'});
+  } catch (error) {
+    return res.status(500).json({msg:error.message});
+  }
 }
 const userDelete=async(req, res) => {
   const {id} = req.params
