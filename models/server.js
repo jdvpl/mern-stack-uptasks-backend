@@ -6,7 +6,6 @@ class Server{
   constructor(){
     this.app = express();
     this.port = process.env.PORT || 3000;
-
     this.paths={
       users:'/api/users',
       auth:'/api/auth',
@@ -42,8 +41,20 @@ class Server{
   }
 
   middlewares() {
+    const whiteList=['http://localhost:3000']
+
+    const corsOptions = {
+      origin:function(origin,callback){
+        console.log(origin);
+        if(whiteList.includes(origin)){
+          callback(null,true);
+        }else{
+          callback(new Error('No esta permitido para esta url.'))
+        }
+      }
+    }
     // usar cors
-    this.app.use(cors());
+    this.app.use(cors(corsOptions));
 
     // parseo de la info del body
     this.app.use(express.json())
