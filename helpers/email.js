@@ -12,8 +12,6 @@ const emailRegister=async(datos={})=>{
       pass: process.env.EMAIl_PASSWORD
     }
   });
-
-
   // Infor de correo
   const info=await transport.sendMail({
     from:'"Uptasks -Administrador de proyectos" <jdvpl@uptasks.com>',
@@ -27,5 +25,29 @@ const emailRegister=async(datos={})=>{
     `
   })
 }
+const emailPassword=async(datos={})=>{
+  const {email,name,token}=datos;
 
-module.exports =emailRegister;
+  const transport = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIl_PORT,
+    auth: {
+      user: process.env.EMAIl_USER,
+      pass: process.env.EMAIl_PASSWORD
+    }
+  });
+  // Infor de correo
+  const info=await transport.sendMail({
+    from:'"Uptasks -Administrador de proyectos" <jdvpl@uptasks.com>',
+    to:email,
+    subject:'Resstblece tu contraseña - Uptasks',
+    text:'Resstblece tu contraseña- Uptasks',
+    html:`<p>Hola <b>${name}</b>, has solicitado actualizar tu contraseña</p>
+    <p>Sigue el siguiente enlace para generar una nueva contraseña<a href="${process.env.F1_URL}/forget-password/${token}">Actualizar contraseña</a></p>
+
+    <p>Si tu no solicitaste este email, puede ignorar el mensaje.</p>
+    `
+  })
+}
+
+module.exports ={emailRegister,emailPassword};

@@ -1,5 +1,5 @@
 const {response}=require('express');
-const emailRegister = require('../helpers/email');
+const {emailRegister,emailPassword} = require('../helpers/email');
 const { generateToken } = require('../helpers/generateToken');
 const User= require('../models/user');
 
@@ -103,6 +103,12 @@ const forgotPassword=async(req,res)=>{
   try {
     user.token=generateToken();
     await user.save();
+    const emailRegisterData={
+      email: email,
+      name: user.name,
+      token: user.token
+    }
+    emailPassword(emailRegisterData)
     return res.status(200).json({msg: `Hemos enviado un correo con las instrucciones para la actualizacion`})
   } catch (error) {
     return res.status(500).json({msg: error.message});

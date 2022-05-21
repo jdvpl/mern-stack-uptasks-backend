@@ -41,7 +41,7 @@ class Server{
   }
 
   middlewares() {
-    const whiteList=[process.env.F1_URL, process.env.F2_URL,process.env.F3_URL];
+    const whiteList=[process.env.F1_URL, process.env.F2_URL,process.env.F3_URL,process.env.F4_URL];
     console.log(whiteList)
 
     const corsOptions = {

@@ -12,6 +12,7 @@ const router=Router();
 router.get('/auth',getUsersConfirmed);
 router.get('/noauth',usersNoConfirmed);
 router.get('/confirm/:token',confirmAccount);
+
 router.get('/forget-password/:token',updatePasswordToken);
 
 router.post('/forget-password/:token',
@@ -26,7 +27,7 @@ router.post('/forget-password/:token',
 
 router.post('/forgotpassword',
 [
-  check('email','Correo no valido').isEmail(),
+  // check('email','Correo no valido').isEmail(),
   check('email').custom(noExisteCorreo),
   validarCampos
 ]
