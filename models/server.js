@@ -41,7 +41,8 @@ class Server{
   }
 
   middlewares() {
-    const whiteList=['http://localhost:3000','http://192.168.20.24:3000']
+    const whiteList=[process.env.F1_URL, process.env.F2_URL,process.env.F3_URL];
+    console.log(whiteList)
 
     const corsOptions = {
       origin:function(origin,callback){

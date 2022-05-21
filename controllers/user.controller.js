@@ -1,4 +1,5 @@
 const {response}=require('express');
+const emailRegister = require('../helpers/email');
 const { generateToken } = require('../helpers/generateToken');
 const User= require('../models/user');
 
@@ -55,6 +56,13 @@ const registerUser=async(req, res) => {
   try {
     // guardar en la base de datos
     await user.save()
+    // send email to confirm user
+    const emailRegisterData={
+      email: email,
+      name: name,
+      token: user.token
+    }
+    emailRegister(emailRegisterData)
     return res.status(202).json({msg: 'Usuario creado correctamente, revisa tu correo para confirmar tu cuenta.'});
   } catch (error) {
     return res.status(500).json({msg:error.message});

@@ -10,6 +10,7 @@ project manager admin, users
   npm i express
   npm i express-validator
   npm i mongoose
+  npm i nodemailer
 
   npm i -D nodemon
 ```
