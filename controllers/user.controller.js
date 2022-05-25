@@ -120,9 +120,14 @@ const updatePasswordToken=async(req,res)=>{
   const {token}=req.params;
   const tokenvalido=await User.findOne({token});
   if(!tokenvalido){
-    return res.status(403).json({msg: `El token ${token} no es valido.`})
+    return res.status(404).json({msg: `El token ${token} no es valido.`})
   }
-  return res.status(202).json({msg: `Usuario valido`})
+  try {
+    return res.status(202).json({msg: `Usuario valido`})
+  } catch (error) {
+    return res.status(500).json({msg: error.message});
+  }
+  
 }
 
 

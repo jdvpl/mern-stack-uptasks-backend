@@ -27,7 +27,7 @@ router.post('/forget-password/:token',
 
 router.post('/forgotpassword',
 [
-  // check('email','Correo no valido').isEmail(),
+  check('email','Correo no valido').isEmail(),
   check('email').custom(noExisteCorreo),
   validarCampos
 ]

@@ -15,7 +15,7 @@ const login=async(req,res=response)=>{
     }
     // verificar si el usaurio esta activo
     if(!user.status){
-      return res.status(400).json({msg: 'Este usuario no esta activo'})
+      return res.status(400).json({msg: 'Este usuario aun no esta activo'})
     }
     // verificar la contraseña
     const validPassword=bcryptjs.compareSync(password, user.password);
