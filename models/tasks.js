@@ -26,7 +26,7 @@ const TaskSchema=Schema({
   priority:{
     type: String,
     required:true,
-    enum:['Baja','Media','Alta']
+    enum:['Low','Medium','High']
   },
   project:{
     type: Schema.Types.ObjectId,

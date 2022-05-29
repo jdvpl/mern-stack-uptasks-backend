@@ -6,7 +6,7 @@ const Task = require("../models/tasks");
 
 // obtener todas la categorias- paginacion-total y populate(relacion de quien la creo)
 const getProjects=async(req, res=response) => {
-  const {limite=10, desde=0}=req.query;
+  const {limite=20, desde=0}=req.query;
   const estado={status:true}
   const [total,projects]=await Promise.all([
     Project.countDocuments(estado)
@@ -28,11 +28,7 @@ const getProjectById=async(req, res=response) => {
     if(!project) {
       return res.status(403).json({msg: `Este usuario no tiene permiso para ver este proyecto.`});
     }
-
-    const estado={status:true}
-    const tareas=await Task.find(estado).where('project').equals(project._id);
-
-    return res.status(200).json({project,tareas});
+    return res.status(200).json(project);
   } catch (error) {
     return res.status(500).json(error)
   }
@@ -79,8 +75,8 @@ const updateProject=async(req, res=response) => {
   } 
 
   try {
-    const producto=await Project.findByIdAndUpdate(id,data, {new: true}).populate('creator',['name']);
-    return res.status(200).json(producto);
+    const project=await Project.findByIdAndUpdate(id,data, {new: true}).populate('creator',['name']);
+    return res.status(200).json({ project,msg:'Project updated successfully'});
   } catch (error) {
     return res.status(500).json({msg: error.message});
   }
@@ -99,7 +95,7 @@ const deleteProject = async(req, res=response) => {
   }
   try {
     const productoborrado=await Project.findByIdAndUpdate(id, {status: false}, {new:true}).populate('creator',['name']);
-    return res.status(200).json({msg: `Proyecto eliminado.`,productoborrado});
+    return res.status(200).json({msg: `Project deleted successfully.`,productoborrado});
   } catch (error) {
     return res.status(500).json({msg: error.message});
   }
