@@ -42,9 +42,11 @@ const createTask = async(req,res=response)=>{
     return res.status(403).json({msg: `No eres el creador de este proyecto.`})
   } 
   try {
-    const project=new Task(data);
-    await project.save();
-    return  res.status(200).json(project);
+    const task=new Task(data);
+    await task.save();
+    proyecto.tasks.push(task._id);
+    proyecto.save();
+    return  res.status(200).json(task);
   } catch (error) {
     return res.status(500).json({msg:error.message});
   }

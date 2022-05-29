@@ -25,6 +25,12 @@ const ProjectSchema=Schema({
     ref: 'User',
     required:true,
   },
+  tasks:[
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Task'
+    }
+  ],
   collaborators:[
     {
       type: Schema.Types.ObjectId,
