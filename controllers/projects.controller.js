@@ -13,6 +13,7 @@ const getProjects=async(req, res=response) => {
     .where('creator').equals(req.user),
     Project.find(estado)
       .populate('creator',['name'])
+      .select('-tasks')
       .skip(Number(desde))
       .limit(Number(limite))
       .where('creator').equals(req.user)
@@ -23,7 +24,12 @@ const getProjects=async(req, res=response) => {
 const getProjectById=async(req, res=response) => {
   const {id}=req.params;
   try {
-    const project=await Project.findById(id).populate('creator',["name"]).populate('collaborators',['name']).where('creator').equals(req.user);
+    const project=await Project.findById(id).populate('creator',["name"]).populate('collaborators',['name']).populate({
+      path:'tasks',
+      options:{sort: {finished:1,dateDelivery:1}}
+    }
+      )
+      .where('creator').equals(req.user);
 
     if(!project) {
       return res.status(403).json({msg: `Este usuario no tiene permiso para ver este proyecto.`});
@@ -38,15 +44,15 @@ const getProjectById=async(req, res=response) => {
 // crear Producto
 const createProject = async(req,res=response)=>{
   const {status,user,...body}=req.body;
-  const {client,description}=body;
+  const {client,description,dateDelivery}=body;
   const name = req.body.name.toUpperCase();
-
   // generar la data al guardar
   const data={
     name,
     creator: req.user._id,
     description,
-    client
+    client,
+    dateDelivery
   }
   try {
     const project=new Project(data);

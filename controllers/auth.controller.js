@@ -9,7 +9,7 @@ const login=async(req,res=response)=>{
 
   try {
     // verificar si el correo existe
-    const user=await User.findOne({ email});
+    const user=await User.findOne({ email}).select('-token -role -createdAt -updatedAt');
     if(!user){
       return res.status(404).json({msg: 'Usuario no existe'})
     }

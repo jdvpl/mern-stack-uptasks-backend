@@ -23,7 +23,7 @@ const getTask=async(req, res=response) => {
 // crear tarea
 const createTask = async(req,res=response)=>{
   const {status,user,...body}=req.body;
-  const { project,description,priority}=body;
+  const { project,description,priority,dateDelivery}=body;
   const name = req.body.name.toUpperCase();
 
   // generar la data al guardar
@@ -31,7 +31,8 @@ const createTask = async(req,res=response)=>{
     name,
     description,
     priority,
-    project
+    project,
+    dateDelivery
   }
   const proyecto=await Project.findById(project);
 
