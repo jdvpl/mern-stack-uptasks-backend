@@ -62,7 +62,6 @@ const updateTask=async(req, res=response) => {
   }
   data.user=req.user._id;
   const tarea=await Task.findById(id).populate('project',['creator']);
-  console.log(tarea)
   const idProyectoCreator=tarea.project.creator.toString();
   const idUsuario=req.user._id.toString();
   console.log(idUsuario)
