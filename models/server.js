@@ -41,7 +41,7 @@ class Server{
   }
 
   middlewares() {
-    const whiteList=[process.env.F1_URL, process.env.F2_URL,process.env.F3_URL,process.env.F4_URL];
+    const whiteList=[process.env.F1_URL, process.env.F2_URL,process.env.F3_URL,process.env.F4_URL,process.env.F5_URL,process.env.F6_URL,process.env.F7_URL];
     console.log(whiteList)
 
     const corsOptions = {
@@ -55,7 +55,8 @@ class Server{
       }
     }
     // usar cors
-    this.app.use(cors(corsOptions));
+    // this.app.use(cors(corsOptions));
+    this.app.use(cors());
 
     // parseo de la info del body
     this.app.use(express.json())

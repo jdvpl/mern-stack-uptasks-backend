@@ -1,7 +1,7 @@
 const {Router}=require('express');
 const { check } = require('express-validator');
-const { createProject, getProjectById, updateProject, deleteProject, getProjects, addCollaborators, deleteCollaborator, } = require('../controllers/projects.controller');
-const { existeProductoById } = require('../helpers/db-validators');
+const { createProject, getProjectById, updateProject, deleteProject, getProjects, addCollaborators, deleteCollaborator, searchCollaborators, } = require('../controllers/projects.controller');
+const { existeProductoById, noExisteCorreo } = require('../helpers/db-validators');
 const { checkAuth } = require('../middlewares/check-auth');
 const { validarCampos } = require('../middlewares/validar-campos');
 
@@ -21,9 +21,20 @@ router.get('/:id',
 ,getProjectById);
 
 
-router.post('/addCollaborators/:project',[checkAuth,validarCampos],addCollaborators);
+// get collaborators
+router.post('/collaborators',
+[
+  checkAuth,
+  check('email','Correo no valido').isEmail(),
+  check('email').custom(noExisteCorreo),
+  validarCampos],
+searchCollaborators);
+// add colaborator
+router.post('/collaborators/:project',[checkAuth,validarCampos],addCollaborators);
 
-router.post('/delete-collaborator/:project',[checkAuth,validarCampos],deleteCollaborator);
+// delete colaborator
+router.delete('/collaborators/:project',[checkAuth,validarCampos],deleteCollaborator);
+
 // crear categoria
 router.post('/',[
   checkAuth,
@@ -42,6 +53,7 @@ router.put('/:id',
     validarCampos,
   ]
   ,updateProject);
+
 
 // borrar categoria solo si es admin borrar logico
 router.delete('/:id',

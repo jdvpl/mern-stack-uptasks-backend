@@ -90,7 +90,7 @@ const deleteTask = async(req, res=response) => {
   }
   try {
     const tareaBorrada=await Task.findByIdAndUpdate(id, {status: false}, {new:true}).populate('project',['name']);
-    return res.status(200).json({msg: `Tarea eliminada.`, tareaBorrada});
+    return res.status(200).json({msg: `Task deleted successfully.`, tareaBorrada});
   } catch (error) {
     return res.status(500).json({msg:error.message});
   }

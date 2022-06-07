@@ -1,6 +1,7 @@
 const { response } = require("express")
 const Project=require("../models/projects");
 const Task = require("../models/tasks");
+const User = require("../models/user");
 
 
 
@@ -26,7 +27,9 @@ const getProjectById=async(req, res=response) => {
   try {
     const project=await Project.findById(id).populate('creator',["name"]).populate('collaborators',['name']).populate({
       path:'tasks',
-      options:{sort: {finished:1,dateDelivery:1}}
+      match: {status:true},
+      options:{sort: {finished:1,dateDelivery:1},
+    }
     }
       )
       .where('creator').equals(req.user);
@@ -107,6 +110,16 @@ const deleteProject = async(req, res=response) => {
   }
 }
 
+const searchCollaborators=async(req, res) => {
+  const {email}=req.body;
+  try {
+    const user=await User.findOne({email}).select('-token -role -createdAt -updatedAt -status');
+    return res.json(user)
+  } catch (error) {
+    return res.status(500).json({msg: error.message});
+  }
+}
+
 const addCollaborators=(req, res) => {
 
 }
@@ -123,5 +136,6 @@ module.exports = {
   updateProject,
   deleteProject,
   addCollaborators,
-  deleteCollaborator
+  deleteCollaborator,
+  searchCollaborators
 }
