@@ -30,10 +30,15 @@ router.post('/collaborators',
   validarCampos],
 searchCollaborators);
 // add colaborator
-router.post('/collaborators/:project',[checkAuth,validarCampos],addCollaborators);
+router.post('/collaborators/:id',
+  [checkAuth,
+    check('id').custom(existeProductoById),
+    check('email').custom(noExisteCorreo),
+    validarCampos],
+addCollaborators);
 
 // delete colaborator
-router.delete('/collaborators/:project',[checkAuth,validarCampos],deleteCollaborator);
+router.delete('/collaborators/:id',[checkAuth,validarCampos],deleteCollaborator);
 
 // crear categoria
 router.post('/',[

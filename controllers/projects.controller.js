@@ -120,8 +120,24 @@ const searchCollaborators=async(req, res) => {
   }
 }
 
-const addCollaborators=(req, res) => {
-
+const addCollaborators=async(req, res) => {
+  const idProject=req.params.id;
+  const project=await Project.findById(idProject);
+  if(project.creator.toString() !==req.user._id.toString()) {
+    return res.status(404).json({msg:"You can't add users, you are not the owner of this project."})
+  }
+  const {email} = req.body;
+  const user=await User.findOne({email})
+  if(project.creator.toString() ===user._id.toString()) {
+    return res.status(404).json({msg:"You can't add yourself."})
+  }
+  if(project.collaborators.includes(user._id)){
+    return res.status(404).json({msg:"This user is already a collaborator."})
+  }
+  // agregar user
+  project.collaborators.push(user._id);
+  await project.save()
+  return res.json({msg:"User added successfully.",project});
 }
 
 const deleteCollaborator=(req, res) => {
