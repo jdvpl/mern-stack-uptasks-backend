@@ -49,5 +49,30 @@ const emailPassword=async(datos={})=>{
     `
   })
 }
+const addingCollaborator=async(datos={})=>{
+  const {email,projectName,adminName}=datos;
 
-module.exports ={emailRegister,emailPassword};
+  const transport = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIl_PORT,
+    auth: {
+      user: process.env.EMAIl_USER,
+      pass: process.env.EMAIl_PASSWORD
+    }
+  });
+  // Infor de correo
+  const info=await transport.sendMail({
+    from:'"Uptasks -Administrador de proyectos" <jdvpl@uptasks.com>',
+    to:email,
+    subject:`Eres colaborador del proyecto ${projectName}`,
+    text:'Te han agregado como colaborador',
+    html:`
+    <p>
+    Hola el administrador ${adminName} te ha agregado al proyecto para que puedas collaborar en el.
+    </p>
+    <p>Si tu no solicitaste este email, puede ignorar el mensaje.</p>
+    `
+  })
+}
+
+module.exports ={emailRegister,emailPassword,addingCollaborator};
