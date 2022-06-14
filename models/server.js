@@ -43,7 +43,7 @@ class Server{
   middlewares() {
     const urls=process.env.URLS_WHITE_LIST.split(',')
     const whiteList=urls;
-
+    console.log(whiteList)
     const corsOptions = {
       origin:function(origin,callback){
         if(whiteList.includes(origin)){
