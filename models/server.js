@@ -43,7 +43,6 @@ class Server{
   middlewares() {
     const urls=process.env.URLS_WHITE_LIST.split(',')
     const whiteList=urls;
-    console.log(whiteList)
     const corsOptions = {
       origin:function(origin,callback){
         if(whiteList.includes(origin)){
@@ -54,8 +53,11 @@ class Server{
       }
     }
     // usar cors
-    this.app.use(cors(corsOptions));
-    // this.app.use(cors());
+    if(process.env.ENV_PRODUCTION=="production"){
+      this.app.use(cors(corsOptions));
+    }else{
+      this.app.use(cors());
+    }
 
     // parseo de la info del body
     this.app.use(express.json())
