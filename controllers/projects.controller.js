@@ -141,7 +141,7 @@ const addCollaborators=async(req, res) => {
   // agregar user
   project.collaborators.push(user._id);
   await project.save()
- 
+
   addingCollaborator(dataEmail)
   return res.json({msg:"User added successfully.",project});
 }

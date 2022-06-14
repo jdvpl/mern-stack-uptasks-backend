@@ -41,21 +41,21 @@ class Server{
   }
 
   middlewares() {
-    const urls=process.env.URLS_WHITE_LIST.split(',')
-    const whiteList=urls;
+    // const urls=process.env.URLS_WHITE_LIST.split(',')
+    // const whiteList=urls;
 
-    const corsOptions = {
-      origin:function(origin,callback){
-        if(whiteList.includes(origin)){
-          callback(null,true);
-        }else{
-          callback(new Error(`No esta permitido para esta url. ${origin}`));
-        }
-      }
-    }
+    // const corsOptions = {
+    //   origin:function(origin,callback){
+    //     if(whiteList.includes(origin)){
+    //       callback(null,true);
+    //     }else{
+    //       callback(new Error(`No esta permitido para esta url. ${origin}`));
+    //     }
+    //   }
+    // }
     // usar cors
-    this.app.use(cors(corsOptions));
-    // this.app.use(cors());
+    // this.app.use(cors(corsOptions));
+    this.app.use(cors());
 
     // parseo de la info del body
     this.app.use(express.json())

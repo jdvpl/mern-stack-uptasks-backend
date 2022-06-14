@@ -13,7 +13,7 @@ const checkAuth=async(req=request,res,next) => {
       req.user=await User.findById(decoded.uid).select('-password -status -token -role -createdAt -updatedAt -__v');
       return next();
     } catch (error) {
-        return res.status(404).json({msg: 'Hubo un error'})
+        return res.status(404).json({msg: error.message});
     }
   }
   if(!token){
