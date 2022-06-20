@@ -98,8 +98,26 @@ const deleteTask = async(req, res=response) => {
 
 
 
-const changeStatus=(req, res) => {
+const changeStatus=async(req, res) => {
+  const {id}=req.params;
 
+  const tarea=await Task.findById(id).populate('project');
+
+  
+  const idProyectoCreator=tarea.project.creator.toString();
+  const idUsuario=req.user._id.toString();
+
+  if(idProyectoCreator !== idUsuario && !tarea.project.collaborators.some(collaborator=>collaborator._id.toString()===req.user._id.toString())){
+    return res.status(403).json({msg: `No eres el creador de este proyecto.`})
+  }
+
+  try {
+    tarea.finished=!tarea.finished;
+    await tarea.save()
+    return res.status(200).json({msg: `Task upted successfully.`, task:tarea});
+  } catch (error) {
+    return res.status(500).json({msg:error.message});
+  }
 }
 
 module.exports = {

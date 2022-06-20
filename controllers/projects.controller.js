@@ -10,18 +10,25 @@ const getProjects=async(req, res=response) => {
   const {limite=20, desde=0}=req.query;
   const estado={status:true}
   const [total,projects]=await Promise.all([
-    Project.countDocuments(estado)
-    .where('creator').equals(req.user),
-    Project.find({
+    Project.countDocuments({
       $or: [
-        {'colaborators':{$in:req.user}},
+        {'collaborators':{$in:req.user}},
         {'creator':{$in:req.user}},
       ],
       $and:[
         estado
       ]
+    }),
+    Project.find({
+      '$or': [
+        {'collaborators':{$in:req.user}},
+        {'creator':{$in:req.user}},
+      ],
+      '$and':[
+        estado
+      ]
     })
-      .populate('creator',['name'])
+      .populate('creator',['name','email'])
       .select('-tasks')
       .skip(Number(desde))
       .limit(Number(limite))
@@ -32,21 +39,22 @@ const getProjects=async(req, res=response) => {
 const getProjectById=async(req, res=response) => {
   const {id}=req.params;
   try {
-    const project=await Project.findById(id).populate('creator',["name"]).populate('collaborators',['name',"email"]).populate({
+    const project=await Project.findById(id).populate('creator',["name",'email']).populate('collaborators',['name',"email"]).populate({
       path:'tasks',
       match: {status:true},
       options:{sort: {finished:1,dateDelivery:1},
     }
     }
-      )
-      .where('creator').equals(req.user);
-
+      );
     if(!project) {
-      return res.status(403).json({msg: `Este usuario no tiene permiso para ver este proyecto.`});
+      return res.status(403).json({msg: `Not Found`});
+    }
+    if(project.creator._id.toString() !== req.user._id.toString() && !project.collaborators.some(collaborator=>collaborator._id.toString()===req.user._id.toString())){
+      return res.status(401).json({msg:"This user can't access to this project."})
     }
     return res.status(200).json(project);
   } catch (error) {
-    return res.status(500).json(error)
+    return res.status(500).json({msg: error.message});
   }
 }
 
