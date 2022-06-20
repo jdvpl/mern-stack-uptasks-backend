@@ -135,7 +135,11 @@ const addCollaborators=async(req, res) => {
     return res.status(404).json({msg:"This user is already a collaborator."})
   }
   const dataEmail={
-    email,projectName:project.name,adminName:project.creator.name
+    email,
+    projectName:project.name,
+    messageSubject:'Eres colaborador del proyecto',
+    messageText:'Te han agregado como colaborador',
+    messageHtml:`Hola el administrador <b>${project.creator.name} </b>del proyecto <b>${project.name}</b> te ha agregado al proyecto para que puedas collaborar en el.`
   }
 
   // agregar user
@@ -146,8 +150,31 @@ const addCollaborators=async(req, res) => {
   return res.json({msg:"User added successfully.",project});
 }
 
-const deleteCollaborator=(req, res) => {
+// delete project
 
+const deleteCollaborator=async(req, res) => {
+  const idProject=req.params.id;
+  const {email,_id,name} = req.body;
+
+  const project=await Project.findById(idProject).populate('creator',["_id","name"]);
+  if(project.creator._id.toString() !==req.user._id.toString()) {
+    return res.status(404).json({msg:"You can't add users, you are not the owner of this project."})
+  }
+
+  const dataEmail={
+    email,
+    projectName:project.name,
+    messageSubject:'Ya no eres colaborador del proyecto',
+    messageText:'Te han eliminado del proyecto',
+    messageHtml:`Hola ${name}, el administrador <b>${project.creator.name} </b>del proyecto <b>${project.name}</b> te ha eliminado del proyecto, gracias por haber estado en el proyecto.`
+  }
+
+  // agregar user
+  project.collaborators.pull(_id);
+  addingCollaborator(dataEmail)
+  await project.save()
+
+  return res.json({msg:"User deleted successfully.",collaborator:_id});
 }
 
 

@@ -38,7 +38,11 @@ router.post('/collaborators/:id',
 addCollaborators);
 
 // delete colaborator
-router.delete('/collaborators/:id',[checkAuth,validarCampos],deleteCollaborator);
+router.post('/delete-collaborator/:id',
+  [checkAuth,
+    check('id').custom(existeProductoById),
+  validarCampos]
+,deleteCollaborator);
 
 // crear categoria
 router.post('/',[
