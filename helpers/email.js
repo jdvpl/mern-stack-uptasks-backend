@@ -73,5 +73,29 @@ const addingCollaborator=async(datos={})=>{
     `
   })
 }
+const sendEmailTask=async(datos={})=>{
+  const {email,messageSubject,messageText,messageHtml}=datos;
 
-module.exports ={emailRegister,emailPassword,addingCollaborator};
+  const transport = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIl_PORT,
+    auth: {
+      user: process.env.EMAIl_USER,
+      pass: process.env.EMAIl_PASSWORD
+    }
+  });
+  // Infor de correo
+  const info=await transport.sendMail({
+    from:'"Uptasks -Administrador de proyectos" <jdvpl@uptasks.com>',
+    to:email,
+    subject:`${messageSubject}`,
+    text:`${messageText}`,
+    html:`
+    <p>
+    ${messageHtml}
+    </p>
+    `
+  })
+}
+
+module.exports ={emailRegister,emailPassword,addingCollaborator,sendEmailTask};

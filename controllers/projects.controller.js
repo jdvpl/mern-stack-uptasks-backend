@@ -41,6 +41,7 @@ const getProjectById=async(req, res=response) => {
   try {
     const project=await Project.findById(id).populate('creator',["name",'email']).populate('collaborators',['name',"email"]).populate({
       path:'tasks',
+      populate: {path:'finishedBy', select:['name', 'email','_id']},
       match: {status:true},
       options:{sort: {finished:1,dateDelivery:1},
     }

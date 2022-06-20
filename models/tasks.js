@@ -32,6 +32,10 @@ const TaskSchema=Schema({
     type: Schema.Types.ObjectId,
     ref: 'Project'
     },
+    finishedBy:{
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
 },{
   timestamps:true,
 });

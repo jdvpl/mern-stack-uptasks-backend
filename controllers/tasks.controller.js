@@ -1,4 +1,5 @@
 const { response } = require("express");
+const { sendEmailTask } = require("../helpers/email");
 const Project = require("../models/projects");
 const Task=require("../models/tasks")
 
@@ -95,26 +96,48 @@ const deleteTask = async(req, res=response) => {
     return res.status(500).json({msg:error.message});
   }
 }
-
-
-
 const changeStatus=async(req, res) => {
   const {id}=req.params;
-
-  const tarea=await Task.findById(id).populate('project');
-
+  const task=await Task.findById(id).populate(
+    {
+      path:'project',
+      populate:{
+        path:'creator'
+      }
+    }
+    );
   
-  const idProyectoCreator=tarea.project.creator.toString();
+  const idProyectoCreator=task.project.creator._id.toString();
   const idUsuario=req.user._id.toString();
-
-  if(idProyectoCreator !== idUsuario && !tarea.project.collaborators.some(collaborator=>collaborator._id.toString()===req.user._id.toString())){
-    return res.status(403).json({msg: `No eres el creador de este proyecto.`})
+  if(idProyectoCreator !== idUsuario && !task.project.collaborators.some(collaborator=>collaborator._id.toString()===req.user._id.toString())){
+    return res.status(403).json({msg: `You can't access to this project`})
   }
-
   try {
-    tarea.finished=!tarea.finished;
-    await tarea.save()
-    return res.status(200).json({msg: `Task upted successfully.`, task:tarea});
+    task.finished=!task.finished;
+    task.finishedBy=req.user._id;
+
+    const dataEmail={
+      email:req.user.email,
+      messageSubject:task.finished?`Termino la tarea ${task.name}`:`Desmarco la tarea ${task.name}`,
+      messageText:task.finished?`Terminaste la tarea ${task.name}`:`No has completado la tarea ${task.name}`,
+      messageHtml:`Gracias por participar en la tarea ${task.name}`
+    }
+
+    sendEmailTask(dataEmail)
+    if(idProyectoCreator !== idUsuario){
+      const dataEmailAdmin={
+        email:task.project.creator.email,
+        messageSubject:``+task.finished?`Termino la tarea ${task.name}`:`Desmarco la tarea ${task.name}`,
+        messageText:task.finished?`Finalizaste la tarea ${task.name}`:`No has completado la tarea ${task.name}`,
+        messageHtml:`El usuario ${req.user.name} ha ${task.finished?'Finalizado':'desmarcado'} la tarea ${task.name}`
+      }
+      sendEmailTask(dataEmailAdmin)
+    }
+  
+    // agregar user
+    await task.save()
+    const taskUpdated=await Task.findById(id).populate('project').populate('finishedBy')
+    return res.status(200).json({msg: `Task updated successfully.`, task:taskUpdated});
   } catch (error) {
     return res.status(500).json({msg:error.message});
   }
