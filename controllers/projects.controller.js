@@ -12,12 +12,19 @@ const getProjects=async(req, res=response) => {
   const [total,projects]=await Promise.all([
     Project.countDocuments(estado)
     .where('creator').equals(req.user),
-    Project.find(estado)
+    Project.find({
+      $or: [
+        {'colaborators':{$in:req.user}},
+        {'creator':{$in:req.user}},
+      ],
+      $and:[
+        estado
+      ]
+    })
       .populate('creator',['name'])
       .select('-tasks')
       .skip(Number(desde))
       .limit(Number(limite))
-      .where('creator').equals(req.user)
   ])
   res.json({total,limite,desde, projects});
 }
@@ -166,7 +173,7 @@ const deleteCollaborator=async(req, res) => {
     projectName:project.name,
     messageSubject:'Ya no eres colaborador del proyecto',
     messageText:'Te han eliminado del proyecto',
-    messageHtml:`Hola ${name}, el administrador <b>${project.creator.name} </b>del proyecto <b>${project.name}</b> te ha eliminado del proyecto, gracias por haber estado en el proyecto.`
+    messageHtml:`Hola ${name} el administrador <b>${project.creator.name} </b>del proyecto <b>${project.name}</b> te ha eliminado del proyecto, gracias por haber estado en el proyecto.`
   }
 
   // agregar user
