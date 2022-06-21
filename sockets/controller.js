@@ -1,13 +1,18 @@
 
 
 const socketController=(socket) =>{
-  console.log("conectado a socket.io"+socket.id);
+  console.log("Connected to socket.io id: "+socket.id);
 
-  socket.on("test",(t)=>{
-    console.log(t)
-
-    socket.emit('response',{name:'kakaroto'})
+  socket.on('open project',(project) =>{
+    socket.join(project)
   })
+
+  socket.on('new task',(task) =>{
+    const project = task.project;
+    console.log(project)
+    socket.to(project).emit('task added',task)
+  })
+
 
 }
 
