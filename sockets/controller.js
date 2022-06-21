@@ -18,6 +18,10 @@ const socketController=(socket) =>{
     const project = task.project._id;
     socket.to(project).emit('task-updated',task)
   })
+  socket.on('change-status-task',task =>{
+    const project = task.project._id;
+    socket.to(project).emit('changed-status-task',task)
+  })
 
 
 }
